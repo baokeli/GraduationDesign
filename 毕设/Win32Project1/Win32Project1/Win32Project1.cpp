@@ -18,6 +18,7 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 BOOL				Demo(HWND, UINT, WPARAM, LPARAM);
 LRESULT				OnMM_WIM_DATA(UINT wParam, LONG lParam);
+DWORD WINAPI		AcceptThreadFunc(LPVOID lpParam);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -44,6 +45,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WIN32PROJECT1));
 
+	HANDLE recvThread = CreateThread(NULL, 0, AcceptThreadFunc, NULL, 0, NULL);
+
 	// 主消息循环: 
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
@@ -53,11 +56,19 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			DispatchMessage(&msg);
 		}
 	}
-
+	CloseHandle(recvThread);
 	return (int) msg.wParam;
 }
 
-
+DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
+{
+	SocketServer* server = new SocketServer();
+	if (server && server->init())
+	{
+		server->run(1002);
+	}
+	return 0;
+}
 
 //
 //  函数:  MyRegisterClass()
