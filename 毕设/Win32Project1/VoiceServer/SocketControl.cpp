@@ -56,10 +56,7 @@ bool SocketClient::Connect(const char *ip, short port)
 	return true;
 }
 
-SOCKET SocketClient::getSocketID()
-{
-	return m_cSocket;
-}
+
 
 
 
@@ -128,6 +125,7 @@ bool SocketServer::run(short port)
 	char buf[1024];
 	while (1)
 	{
+		printf("Server Start Runing £¡");
 		newSocket = accept(m_sSocket, (sockaddr*)&remoteAddr, &nAddrLen);
 		if (newSocket == INVALID_SOCKET)
 		{
@@ -135,6 +133,7 @@ bool SocketServer::run(short port)
 		}
 		else
 		{
+			
 			do
 			{
 				memset(buf, 0, sizeof(buf));

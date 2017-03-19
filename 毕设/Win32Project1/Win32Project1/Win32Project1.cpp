@@ -62,10 +62,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 {
-	SocketServer* server = new SocketServer();
-	if (server && server->init())
+	SocketClient* _client = new SocketClient();
+	if (_client && _client->init())
 	{
-		server->run(1002);
+		_client->Connect("127.0.0.1",4001);
+		::send(_client->getSocketID(), "Holle World!", 16, 0);
 	}
 	return 0;
 }

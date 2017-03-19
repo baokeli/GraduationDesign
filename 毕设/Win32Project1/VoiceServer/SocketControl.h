@@ -10,7 +10,6 @@ public:
 	~SocketClient();
 	bool init();
 	bool Connect(const char *ip, short port);
-	SOCKET getSocketID();
 
 private:
 	WSADATA wsa;

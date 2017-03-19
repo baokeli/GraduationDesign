@@ -24,18 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32Project1.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GWaveIn.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GWaveOut.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="SocketControl.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -44,30 +32,11 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win32Project1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GWaveIn.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GWaveOut.cpp">
+    <ClCompile Include="VoiceServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SocketControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Win32Project1.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="Win32Project1.ico">
-      <Filter>资源文件</Filter>
-    </Image>
   </ItemGroup>
 </Project>
