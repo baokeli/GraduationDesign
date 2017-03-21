@@ -1,10 +1,6 @@
-// VoiceServer.cpp : 定义控制台应用程序的入口点。
-//
-
 #include "stdafx.h"
-#include "SocketControl.h"
+#include "SocketServer.h"
 
-DWORD WINAPI acceptThread(LPVOID lpParam);
 SocketServer* lpSocketSvr;
 
 int main(int argc, _TCHAR* argv[])
