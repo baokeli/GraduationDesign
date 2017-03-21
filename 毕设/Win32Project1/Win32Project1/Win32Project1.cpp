@@ -4,21 +4,6 @@
 #include "stdafx.h"
 #include "Win32Project1.h"
 
-#define MAX_LOADSTRING 100
-
-// 全局变量: 
-HINSTANCE hInst;								// 当前实例
-TCHAR szTitle[MAX_LOADSTRING];					// 标题栏文本
-TCHAR szWindowClass[MAX_LOADSTRING];			// 主窗口类名
-
-// 此代码模块中包含的函数的前向声明: 
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-BOOL				Demo(HWND, UINT, WPARAM, LPARAM);
-LRESULT				OnMM_WIM_DATA(UINT wParam, LONG lParam);
-DWORD WINAPI		AcceptThreadFunc(LPVOID lpParam);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -62,11 +47,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 {
-	SocketClient* _client = new SocketClient();
-	if (_client && _client->init())
+	SocketClient* lpClient = new SocketClient();
+	if (lpClient && lpClient->init())
 	{
-		_client->Connect("127.0.0.1",4001);
-		::send(_client->getSocketID(), "Holle World!", 16, 0);
+		lpClient->Connect("127.0.0.1",4001);
+		::send(lpClient->getSocketID(), "Holle World!", 16, 0);
+		char buf[1024];
+		while (1)
+		{
+			::recv(lpClient->getSocketID(), buf, sizeof(buf), 0);
+			MessageBoxA(0, buf, "提示",0);
+		}
 	}
 	return 0;
 }

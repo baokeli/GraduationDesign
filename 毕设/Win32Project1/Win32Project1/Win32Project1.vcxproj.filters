@@ -36,7 +36,7 @@
     <ClInclude Include="GWaveOut.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SocketControl.h">
+    <ClInclude Include="SocketClient.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,7 +53,7 @@
     <ClCompile Include="GWaveOut.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SocketControl.cpp">
+    <ClCompile Include="SocketClient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

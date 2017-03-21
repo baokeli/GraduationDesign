@@ -24,7 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SocketControl.h">
+    <ClInclude Include="SocketServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClCompile Include="VoiceServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SocketControl.cpp">
+    <ClCompile Include="SocketServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
