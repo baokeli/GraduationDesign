@@ -2,15 +2,9 @@
 #include <stdio.h>
 
 ///////////////////////////////////////
-
 //服务端socket
 SocketServer::SocketServer()
-:m_nLinkNum(0),
-m_sSocket(0)
 {
-	memset(&m_Addr, 0, sizeof(m_Addr));
-	memset(&wsa, 0, sizeof(wsa));
-	memset(m_SocketArr, 0, sizeof(m_SocketArr));
 }
 
 SocketServer::~SocketServer()
@@ -67,70 +61,49 @@ bool SocketServer::run(short port)
 	}
 
 	SOCKET resultSocket;
+//	sockaddr_in remoteAddr;
 	int nAddrLen = sizeof(m_Addr);
-
-	printf("Server Start Runing ！\n");
+	int rval;
+	char buf[1024];
 	while (1)
 	{
+		printf("Server Start Runing ！\n");
 		resultSocket = accept(m_sSocket, (sockaddr*)&m_Addr, &nAddrLen);
 		if (resultSocket == INVALID_SOCKET)
 		{
-			printf("Failed accept()\n");
+			printf("Failed accept()");
 		}
 		else
 		{
-			printf("Succeed accept()\n");
-			saveSocket(resultSocket);
-			m_nLinkNum++;
+			do
+			{
+				memset(buf, 0, sizeof(buf));
+				rval = recv(resultSocket, buf, 1024, 0);
+
+				if (rval == SOCKET_ERROR)
+				{
+					printf("recv socket error\n\n");
+					continue;
+				}
+				else if (rval == 0)
+					//recv返回0表示正常退出
+					printf("ending connection\n");
+				else
+				{	//显示接收到的数据
+					printf("recv :%s\n", buf);
+					::send(m_sSocket, "收到！", 8,0);
+				}
+			} while (rval != 0);
+
+			//关闭对应Accept的socket
+			closesocket(resultSocket);
 		}
 	}
 
 	return true;
 }
 
-SOCKET SocketServer::getSvrSocket()
+SOCKET SocketServer::getSocket()
 {
 	return m_sSocket;
-}
-
-SOCKET SocketServer::getSocket(int index)
-{
-	if (index < 0 || index > 1)
-		return getSvrSocket();
-	else
-		return m_SocketArr[index];
-}
-
-void SocketServer::saveSocket(SOCKET socket)
-{
-	for (int i=0;i<2;i++)
-	{
-		if (m_SocketArr[i] == 0)
-		{
-			m_SocketArr[i] = socket;
-			break;
-		}
-	}
-}
-
-bool SocketServer::clearSocket(SOCKET socket)
-{
-	for (int i = 0; i < 2; i++)
-	{
-		if (m_SocketArr[i] == socket)
-		{
-			m_SocketArr[i] = 0;
-			return true;
-		}
-	}
-	return false;
-}
-
-int SocketServer::SendtoClient(SOCKET socket,char* buf)
-{
-	SendInfo sendInfo;
-	sendInfo.cSocket = socket;
-	sendInfo.sendMsg = buf;
-	m_qSendQueue.push(sendInfo);
-	return 0;
 }
