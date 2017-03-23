@@ -1,6 +1,10 @@
-#include "stdafx.h"
-#include "SocketServer.h"
+// VoiceServer.cpp : 定义控制台应用程序的入口点。
+//
 
+#include "stdafx.h"
+#include "SocketControl.h"
+
+DWORD WINAPI acceptThread(LPVOID lpParam);
 SocketServer* lpSocketSvr;
 bool recvLock = false;
 bool sendLock = false;
