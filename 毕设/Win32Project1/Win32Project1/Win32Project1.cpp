@@ -71,8 +71,26 @@ DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 		//long long i = 1;
 		while (1)
 		{
-			Sleep(10);
-			::recv(lpClient->GetSocketID(), buf, sizeof(buf), 0);
+			memset(buf, 0, sizeof(buf));
+			auto rval = ::recv(lpClient->getSocketID(), buf, sizeof(buf), 0);
+
+			if (rval == SOCKET_ERROR)
+			{
+				printf("recv socket error\n\n");
+				break;
+			}
+			else if (rval == 0)
+			{	//recv返回0表示正常退出
+				printf("ending connection\n");
+				break;
+			}
+			else
+			{	//显示接收到的数据
+				printf("recv :%s\n", buf);
+
+			//	lpSocketSvr->SendtoClient(resultSocket, buf);
+			}
+			//MessageBoxA(0, buf, "提示",0);
 		}
 	}
 	return 0;
@@ -121,7 +139,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+      CW_USEDEFAULT, 0, 400, 300, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {
@@ -152,6 +170,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
+	case WM_CREATE:
+	{
+		hBtnStart = CreateWindow(L"Button", L"连接服务器", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+			80, 150, 90, 40, hWnd, NULL, hInst, NULL);
+		hBtnClose = CreateWindow(L"Button", L"关闭连接", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+			245, 150, 90, 40, hWnd, NULL, hInst, NULL);
+
+
+		break;
+	}
 	case WM_COMMAND:
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
@@ -173,6 +201,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO:  在此添加任意绘图代码...
+		TEXTMETRIC tm;
+		// 取得与文本相关的数据  
+		GetTextMetrics(ps.hdc, &tm);
+		RECT rect;
+		rect.top = 20;
+		rect.bottom = rect.top + tm.tmHeight;
+		rect.left = ps.rcPaint.left;
+		rect.right = ps.rcPaint.right;
+		SetTextColor(ps.hdc, RGB(220, 15, 25));
+		DrawText(ps.hdc, L"未连接服务器。。。", -1, &rect, DT_CENTER);
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:

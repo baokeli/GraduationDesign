@@ -9,3 +9,6 @@ BYTE* m_pBuf3 = NULL;
 BYTE* m_pBuf4 = NULL;
 int iBufNum = 0;
 bool flag = false;
+HANDLE hBtnStart;
+HANDLE hBtnClose;
+HANDLE hText1;
