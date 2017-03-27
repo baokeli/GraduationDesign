@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "SocketControl.h"
+#include "SocketServer.h"
 
 DWORD WINAPI acceptThread(LPVOID lpParam);
 SocketServer* lpSocketSvr;
