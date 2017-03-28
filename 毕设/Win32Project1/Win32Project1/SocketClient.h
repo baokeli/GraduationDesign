@@ -19,4 +19,5 @@ private:
 	WSADATA wsa;
 	sockaddr_in m_Addr;
 	SOCKET m_cSocket;
+	SOCKET m_svrSocket;
 };
