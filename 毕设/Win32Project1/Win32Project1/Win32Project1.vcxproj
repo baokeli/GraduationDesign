@@ -82,16 +82,18 @@
     <ClInclude Include="GWaveIn.h" />
     <ClInclude Include="GWaveOut.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SocketControl.h" />
+    <ClInclude Include="SocketClient.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Win32Project1.h" />
+    <ClInclude Include="XY.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GWaveIn.cpp" />
     <ClCompile Include="GWaveOut.cpp" />
-    <ClCompile Include="SocketControl.cpp">
+    <ClCompile Include="SocketClient.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

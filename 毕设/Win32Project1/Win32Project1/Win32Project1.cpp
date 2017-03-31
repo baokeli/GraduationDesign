@@ -63,15 +63,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 {
 	SocketClient* lpClient = new SocketClient();
-	if (lpClient && lpClient->init())
+	if (lpClient && lpClient->Init())
 	{
 		lpClient->Connect("127.0.0.1",4001);
-		::send(lpClient->getSocketID(), "Holle World!", 16, 0);
+		::send(lpClient->GetSocketID(), "Holle World!", 16, 0);
 		char buf[1024];
+		//long long i = 1;
 		while (1)
 		{
-			::recv(lpClient->getSocketID(), buf, sizeof(buf), 0);
-			MessageBoxA(0, buf, "ÌבÊ¾",0);
+			Sleep(10);
+			::recv(lpClient->GetSocketID(), buf, sizeof(buf), 0);
 		}
 	}
 	return 0;

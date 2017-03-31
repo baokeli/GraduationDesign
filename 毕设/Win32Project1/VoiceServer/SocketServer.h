@@ -3,9 +3,12 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <queue>
+#include"XY.h"
 
 #pragma comment(lib,"winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
+
+
 
 struct SendInfo
 {
@@ -19,15 +22,17 @@ class SocketServer
 public:
 	SocketServer();
 	~SocketServer();
-	bool init();
+	bool Init();
 	bool Listen(short port);
-	bool run(short port);
+	bool Run(short port);
 
-	SOCKET getSvrSocket();
-	SOCKET getSocket(int index);
-	void saveSocket(SOCKET socket);
-	bool clearSocket(SOCKET socket);
+	SOCKET GetSvrSocket();
+	SOCKET GetSocket(int index);
+	void SaveSocket(SOCKET socket);
+	bool ClearSocket(SOCKET socket);
 	int SendtoClient(SOCKET socket, char* buf);
+	void MessageDispatch(SOCKET socket ,char * msg);
+	XYStruct ParseMsg(char * msg);
 
 private:
 	SOCKET m_sSocket;
@@ -43,4 +48,4 @@ public:
 DWORD WINAPI RecvThread1(LPVOID lpParam);
 DWORD WINAPI RecvThread2(LPVOID lpParam);
 DWORD WINAPI SendThread(LPVOID lpParam);
-void recvBuff(SOCKET resultSocket);
+void RecvBuff(SOCKET resultSocket);

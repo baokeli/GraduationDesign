@@ -1,6 +1,5 @@
 #include "SocketServer.h"
 #include <stdio.h>
-
 ///////////////////////////////////////
 
 //服务端socket
@@ -17,7 +16,7 @@ SocketServer::~SocketServer()
 {
 }
 
-bool SocketServer::init()
+bool SocketServer::Init()
 {
 	/*初始化socket资源*/
 	if (WSAStartup(MAKEWORD(1, 1), &wsa) != 0)
@@ -59,7 +58,7 @@ bool SocketServer::Listen(short port)
 	return true;
 }
 
-bool SocketServer::run(short port)
+bool SocketServer::Run(short port)
 {
 	if (!Listen(port))
 	{
@@ -80,28 +79,29 @@ bool SocketServer::run(short port)
 		else
 		{
 			printf("Succeed accept()\n");
-			saveSocket(resultSocket);
+			SaveSocket(resultSocket);
 			m_nLinkNum++;
 		}
+		Sleep(1);
 	}
 
 	return true;
 }
 
-SOCKET SocketServer::getSvrSocket()
+SOCKET SocketServer::GetSvrSocket()
 {
 	return m_sSocket;
 }
 
-SOCKET SocketServer::getSocket(int index)
+SOCKET SocketServer::GetSocket(int index)
 {
 	if (index < 0 || index > 1)
-		return getSvrSocket();
+		return GetSvrSocket();
 	else
 		return m_SocketArr[index];
 }
 
-void SocketServer::saveSocket(SOCKET socket)
+void SocketServer::SaveSocket(SOCKET socket)
 {
 	for (int i = 0; i < 2; i++)
 	{
@@ -113,7 +113,7 @@ void SocketServer::saveSocket(SOCKET socket)
 	}
 }
 
-bool SocketServer::clearSocket(SOCKET socket)
+bool SocketServer::ClearSocket(SOCKET socket)
 {
 	for (int i = 0; i < 2; i++)
 	{
@@ -133,4 +133,39 @@ int SocketServer::SendtoClient(SOCKET socket, char* buf)
 	sendInfo.sendMsg = buf;
 	m_qSendQueue.push(sendInfo);
 	return 0;
+}
+
+void SocketServer::MessageDispatch(SOCKET socket ,char * msg)
+{
+	XYStruct xy = ParseMsg(msg);
+
+	switch (xy.xyid)
+	{
+	case XYStruct::XYID_CONNECT:
+	{
+		break;
+	}
+	case XYStruct::XYID_SEND_VOICE:
+	{
+		SendtoClient(socket, msg);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+
+XYStruct SocketServer::ParseMsg(char * msg)
+{
+	// XYID + MSGLEN + MSG
+	// 2    +   2    + MSGLEN 
+	XYStruct xy;
+	if (strlen(msg) >= 4)
+	{
+		xy.xyid = msg[0] + msg[1];
+		xy.msgLen = msg[2] * 10 + msg[3];
+		xy.msg = msg + 4;
+	}
+	return xy;
 }

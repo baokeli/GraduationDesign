@@ -23,5 +23,5 @@
 // TODO:  在此处引用程序需要的其他头文件
 #include "GWaveIn.h"
 #include "GWaveOut.h"
-#include "SocketControl.h"
+#include "SocketClient.h"
 // TODO:  在此处加载需要的静态库

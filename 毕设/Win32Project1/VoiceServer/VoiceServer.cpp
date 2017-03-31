@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "SocketServer.h"
 
-DWORD WINAPI acceptThread(LPVOID lpParam);
 SocketServer* lpSocketSvr;
 bool recvLock = false;
 bool sendLock = false;
@@ -17,9 +16,9 @@ int main(int argc, _TCHAR* argv[])
 	HANDLE recvThread2 = CreateThread(NULL, 0, RecvThread2, NULL, 0, NULL);
 	HANDLE sendThread = CreateThread(NULL, 0, SendThread, NULL, 0, NULL);
 	
-	if (lpSocketSvr && lpSocketSvr->init())
+	if (lpSocketSvr && lpSocketSvr->Init())
 	{
-		lpSocketSvr->run(4001);
+		lpSocketSvr->Run(4001);
 	}
 
 	CloseHandle(recvThread1);
@@ -34,11 +33,12 @@ DWORD WINAPI RecvThread1(LPVOID lpParam)
 	SOCKET resultSocket;
 	while (1)
 	{
-		if (lpSocketSvr->getSocket(0) != 0)
+		if (lpSocketSvr->GetSocket(0) != 0)
 		{
-			resultSocket = lpSocketSvr->getSocket(0);
-			recvBuff(resultSocket);
+			resultSocket = lpSocketSvr->GetSocket(0);
+			RecvBuff(resultSocket);
 		}
+		Sleep(10);
 	}
 	
 	return 0;
@@ -49,17 +49,18 @@ DWORD WINAPI RecvThread2(LPVOID lpParam)
 	SOCKET resultSocket;
 	while (1)
 	{
-		if (lpSocketSvr->getSocket(1) != 0)
+		if (lpSocketSvr->GetSocket(1) != 0)
 		{
-			resultSocket = lpSocketSvr->getSocket(1);
-			recvBuff(resultSocket);
+			resultSocket = lpSocketSvr->GetSocket(1);
+			RecvBuff(resultSocket);
 		}
+		Sleep(10);
 	}
 
 	return 0;
 }
 
-void recvBuff(SOCKET resultSocket)
+void RecvBuff(SOCKET resultSocket)
 {
 	int rval;
 	char buf[1024];
@@ -84,14 +85,15 @@ void recvBuff(SOCKET resultSocket)
 			{	//显示接收到的数据
 				printf("recv :%s\n", buf);
 				
-				lpSocketSvr->SendtoClient(resultSocket,buf);
+				lpSocketSvr->MessageDispatch(resultSocket ,buf);
 			}
 
 		}
+		Sleep(10);
 	}
 	closesocket(resultSocket);
 	lpSocketSvr->m_nLinkNum--;
-	lpSocketSvr->clearSocket(resultSocket);
+	lpSocketSvr->ClearSocket(resultSocket);
 }
 DWORD WINAPI SendThread(LPVOID lpParam)
 {
@@ -105,6 +107,7 @@ DWORD WINAPI SendThread(LPVOID lpParam)
 			::send(msg.cSocket, msg.sendMsg, len, 0);
 			lpSocketSvr->m_qSendQueue.pop();
 		}
+		Sleep(10);
 	}
 
 	return 0;
