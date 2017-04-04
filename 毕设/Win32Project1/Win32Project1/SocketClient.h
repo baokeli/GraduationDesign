@@ -18,6 +18,7 @@ public:
 	SOCKET GetSocketID();
 	void MessageDispatch(char * msg);
 	XYStruct ParseMsg(char* msg);
+	void SendtoServer(SOCKET socket,int xyid,char* buff);
 private:
 	WSADATA wsa;
 	sockaddr_in m_Addr;

@@ -143,6 +143,7 @@ void SocketServer::MessageDispatch(SOCKET socket ,char * msg)
 	{
 	case XYStruct::XYID_CONNECT:
 	{
+		printf(msg);
 		break;
 	}
 	case XYStruct::XYID_SEND_VOICE:

@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Win32Project1.h"
+#pragma comment(lib,"ws2_32.lib")  
 
 #define MAX_LOADSTRING 100
 
@@ -66,13 +67,16 @@ DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 	if (lpClient && lpClient->Init())
 	{
 		lpClient->Connect("127.0.0.1",4001);
-		::send(lpClient->GetSocketID(), "Holle World!", 16, 0);
+		//::send(lpClient->GetSocketID(), "Holle World!", 16, 0);
+		char* str = "wo ri ni ma";
+		lpClient->SendtoServer(lpClient->GetSocketID(), 1, str);
 		char buf[1024];
 		//long long i = 1;
 		while (1)
 		{
+			Sleep(10);
 			memset(buf, 0, sizeof(buf));
-			auto rval = ::recv(lpClient->getSocketID(), buf, sizeof(buf), 0);
+			auto rval = ::recv(lpClient->GetSocketID(), buf, sizeof(buf), 0);
 
 			if (rval == SOCKET_ERROR)
 			{
@@ -87,8 +91,8 @@ DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 			else
 			{	//显示接收到的数据
 				printf("recv :%s\n", buf);
+				lpClient->SendtoServer(lpClient->GetSocketID(), XYStruct::XYID_SEND_VOICE, buf);
 
-			//	lpSocketSvr->SendtoClient(resultSocket, buf);
 			}
 			//MessageBoxA(0, buf, "提示",0);
 		}
@@ -210,7 +214,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rect.left = ps.rcPaint.left;
 		rect.right = ps.rcPaint.right;
 		SetTextColor(ps.hdc, RGB(220, 15, 25));
-		DrawText(ps.hdc, L"未连接服务器。。。", -1, &rect, DT_CENTER);
+		if (FALSE)
+		{
+			DrawText(ps.hdc, L"通话中。。。", -1, &rect, DT_CENTER);
+		}
+		else
+		{
+			DrawText(ps.hdc, L"未连接服务器。。。", -1, &rect, DT_CENTER);
+		}
+
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:

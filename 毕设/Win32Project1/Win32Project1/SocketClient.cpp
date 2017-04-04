@@ -1,5 +1,5 @@
 #include "SocketClient.h"
-
+#include "string"
 
 //¿Í»§¶Ësocket
 SocketClient::SocketClient()
@@ -75,4 +75,18 @@ XYStruct SocketClient::ParseMsg(char * msg)
 		xy.msg = msg + 4;
 	}
 	return xy;
+}
+
+void SocketClient::SendtoServer(SOCKET socket, int xyid, char* buff)
+{
+	char str[1024];
+	int len = 0;
+	len = strlen(buff);
+	str[0] = 0;
+	str[1] = xyid;
+	str[2] = len/10;
+	str[3] = len%10;
+	//str += buff;
+	memcpy(str+4,buff,len);
+	::send(socket, str, len, 0);
 }
