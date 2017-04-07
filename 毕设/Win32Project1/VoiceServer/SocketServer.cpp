@@ -143,7 +143,7 @@ void SocketServer::MessageDispatch(SOCKET socket ,char * msg)
 	{
 	case XYStruct::XYID_CONNECT:
 	{
-		printf(msg);
+		printf("%s\n",xy.msg);
 		break;
 	}
 	case XYStruct::XYID_SEND_VOICE:
@@ -160,13 +160,13 @@ void SocketServer::MessageDispatch(SOCKET socket ,char * msg)
 XYStruct SocketServer::ParseMsg(char * msg)
 {
 	// XYID + MSGLEN + MSG
-	// 2    +   2    + MSGLEN 
+	// 1    +   2    + MSGLEN 
 	XYStruct xy;
-	if (strlen(msg) >= 4)
+	if (strlen(msg) >= 3)
 	{
-		xy.xyid = msg[0] + msg[1];
-		xy.msgLen = msg[2] * 10 + msg[3];
-		xy.msg = msg + 4;
+		xy.xyid = msg[0];
+		xy.msgLen = msg[1] * 10 + msg[2];
+		memcpy(xy.msg, msg + 3, xy.msgLen);
 	}
 	return xy;
 }

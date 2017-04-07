@@ -83,7 +83,7 @@ void RecvBuff(SOCKET resultSocket)
 			}
 			else
 			{	//显示接收到的数据
-				printf("recv :%s\n", buf);
+				//printf("recv :%s\n", buf);
 				
 				lpSocketSvr->MessageDispatch(resultSocket ,buf);
 			}

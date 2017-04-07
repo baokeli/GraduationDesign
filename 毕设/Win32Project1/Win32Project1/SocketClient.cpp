@@ -66,13 +66,13 @@ void SocketClient::MessageDispatch(char* msg)
 XYStruct SocketClient::ParseMsg(char * msg)
 {
 	// XYID + MSGLEN + MSG
-	// 2    +   2    + MSGLEN 
+	// 1    +   2    + MSGLEN 
 	XYStruct xy;
-	if (strlen(msg)>=4)
+	if (strlen(msg) >= 3)
 	{
-		xy.xyid = msg[0] * 10 + msg[1];
-		xy.msgLen = msg[2] * 10 + msg[3];
-		xy.msg = msg + 4;
+		xy.xyid = msg[0];
+		xy.msgLen = msg[1] * 10 + msg[2];
+		memcpy(xy.msg, msg + 3, xy.msgLen);
 	}
 	return xy;
 }
@@ -82,11 +82,10 @@ void SocketClient::SendtoServer(SOCKET socket, int xyid, char* buff)
 	char str[1024];
 	int len = 0;
 	len = strlen(buff);
-	str[0] = 0;
-	str[1] = xyid;
-	str[2] = len/10;
-	str[3] = len%10;
+	str[0] = xyid;
+	str[1] = len/10;
+	str[2] = len%10;
 	//str += buff;
-	memcpy(str+4,buff,len);
-	::send(socket, str, len, 0);
+	memcpy(str+3,buff,len);
+	::send(socket, str, len+3, 0);
 }
