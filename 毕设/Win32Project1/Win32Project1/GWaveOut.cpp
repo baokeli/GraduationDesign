@@ -38,11 +38,11 @@ bool GWaveOut::PrepareWaveOut(HWND hwnd, BYTE* pbuf1, BYTE* pbuf2)
 {
 	WAVEFORMATEX waveformatex = {0};
 	waveformatex.wFormatTag = WAVE_FORMAT_PCM;
-	waveformatex.nChannels = 1;
+	waveformatex.nChannels = 2;
 	waveformatex.cbSize = 0;
 	waveformatex.nAvgBytesPerSec = 11025*1*8/8;
 	waveformatex.nBlockAlign = 1;
-	waveformatex.nSamplesPerSec = 11025;
+	waveformatex.nSamplesPerSec = 8000;
 	waveformatex.wBitsPerSample = 8;
 
 	MMRESULT mmresult = 0;
@@ -50,7 +50,7 @@ bool GWaveOut::PrepareWaveOut(HWND hwnd, BYTE* pbuf1, BYTE* pbuf2)
 	if(mmresult != MMSYSERR_NOERROR) return false;
 
 	m_head1.lpData = (LPSTR)pbuf1;
-	m_head1.dwBufferLength = 20480;
+	m_head1.dwBufferLength = 2048;
 	m_head1.dwBytesRecorded = 0;
 	m_head1.dwUser = 0;
 	m_head1.dwFlags = 0;
@@ -62,7 +62,7 @@ bool GWaveOut::PrepareWaveOut(HWND hwnd, BYTE* pbuf1, BYTE* pbuf2)
 	if(mmresult != MMSYSERR_NOERROR) return false;
 
 	m_head2.lpData = (LPSTR)pbuf2;
-	m_head2.dwBufferLength = 20480;
+	m_head2.dwBufferLength = 2048;
 	m_head2.dwBytesRecorded = 0;
 	m_head2.dwUser = 0;
 	m_head2.dwFlags = 0;

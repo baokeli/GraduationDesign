@@ -2,7 +2,8 @@
 #include "string"
 
 //¿Í»§¶Ësocket
-SocketClient::SocketClient()
+SocketClient::SocketClient():
+m_cSocket(0)
 {
 }
 
@@ -38,7 +39,11 @@ bool SocketClient::Connect(const char *ip, short port)
 
 	return true;
 }
-
+void SocketClient::Close()
+{
+	closesocket(m_cSocket);
+	m_cSocket = NULL;
+}
 SOCKET SocketClient::GetSocketID()
 {
 	return m_cSocket;

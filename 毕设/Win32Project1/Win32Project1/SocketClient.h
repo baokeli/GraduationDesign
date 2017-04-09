@@ -15,6 +15,7 @@ public:
 
 	bool Init();
 	bool Connect(const char *ip, short port);
+	void Close();
 	SOCKET GetSocketID();
 	void MessageDispatch(char * msg);
 	XYStruct ParseMsg(char* msg);

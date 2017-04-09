@@ -53,7 +53,7 @@ bool GWaveIn::PrepareWaveIn(HWND hwnd, BYTE* pbuf1, BYTE* pbuf2)
 
 	
 	m_head1.lpData = (LPSTR)pbuf1;
-	m_head1.dwBufferLength = 20480;
+	m_head1.dwBufferLength = 2048;
 	m_head1.dwBytesRecorded = 0;
 	m_head1.dwUser = 0;
 	m_head1.dwFlags = 0;
@@ -65,7 +65,7 @@ bool GWaveIn::PrepareWaveIn(HWND hwnd, BYTE* pbuf1, BYTE* pbuf2)
 	if(mmresult != MMSYSERR_NOERROR) return false;
 
 	m_head2.lpData = (LPSTR)pbuf2;
-	m_head2.dwBufferLength = 20480;
+	m_head2.dwBufferLength = 2048;
 	m_head2.dwBytesRecorded = 0;
 	m_head2.dwUser = 0;
 	m_head2.dwFlags = 0;

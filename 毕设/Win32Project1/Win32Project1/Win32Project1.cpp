@@ -6,11 +6,16 @@
 #pragma comment(lib,"ws2_32.lib")  
 
 #define MAX_LOADSTRING 100
+#define BTN_CONNECT		101
+#define BTN_CLOSE		102
+
 
 // 全局变量: 
 HINSTANCE hInst;								// 当前实例
 TCHAR szTitle[MAX_LOADSTRING];					// 标题栏文本
 TCHAR szWindowClass[MAX_LOADSTRING];			// 主窗口类名
+bool isConnect = false;
+SocketClient* lpClient=NULL;
 
 // 此代码模块中包含的函数的前向声明: 
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -63,16 +68,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 {
-	SocketClient* lpClient = new SocketClient();
+	lpClient = new SocketClient();
 	if (lpClient && lpClient->Init())
 	{
-		lpClient->Connect("127.0.0.1",4001);
-		//::send(lpClient->GetSocketID(), "Holle World!", 16, 0);
-		char* str = "wo ri ni ma";
-		lpClient->SendtoServer(lpClient->GetSocketID(), 1, str);
 		char buf[1024];
-		//long long i = 1;
-		while (1)
+		while (isConnect)
 		{
 			Sleep(10);
 			memset(buf, 0, sizeof(buf));
@@ -177,9 +177,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 	{
 		hBtnStart = CreateWindow(L"Button", L"连接服务器", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			80, 150, 90, 40, hWnd, NULL, hInst, NULL);
+			80, 150, 90, 40, hWnd, (HMENU)BTN_CONNECT, hInst, NULL);
 		hBtnClose = CreateWindow(L"Button", L"关闭连接", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			245, 150, 90, 40, hWnd, NULL, hInst, NULL);
+			245, 150, 90, 40, hWnd, (HMENU)BTN_CLOSE, hInst, NULL);
 
 
 		break;
@@ -198,6 +198,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Demo(hWnd, message, wParam, lParam);
 			break;
 		}
+		case BTN_CONNECT:
+		{
+
+			if (!isConnect && lpClient->Connect("127.0.0.1", 4001))
+			{
+				isConnect = true;
+				char* str = "wo ri ni ma";
+				lpClient->SendtoServer(lpClient->GetSocketID(), 1, str);
+				InvalidateRect(hWnd,NULL,TRUE);
+			}
+			break;
+		}
+		case  BTN_CLOSE:
+		{
+			lpClient->Close();
+			isConnect = false;
+			InvalidateRect(hWnd, NULL, TRUE);
+			break;
+		}
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -214,7 +233,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rect.left = ps.rcPaint.left;
 		rect.right = ps.rcPaint.right;
 		SetTextColor(ps.hdc, RGB(220, 15, 25));
-		if (FALSE)
+		if (isConnect)
 		{
 			DrawText(ps.hdc, L"通话中。。。", -1, &rect, DT_CENTER);
 		}
@@ -226,6 +245,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
+		if (lpClient)
+		{
+			lpClient->Close();
+		}
 		PostQuitMessage(0);
 		break;
 	case MM_WIM_DATA:
