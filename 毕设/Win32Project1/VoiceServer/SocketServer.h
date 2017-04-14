@@ -28,9 +28,10 @@ public:
 
 	SOCKET GetSvrSocket();
 	SOCKET GetSocket(int index);
+	SOCKET GetOtherSocket(SOCKET socket);
 	void SaveSocket(SOCKET socket);
 	bool ClearSocket(SOCKET socket);
-	int SendtoClient(SOCKET socket, char* buf);
+	int SendtoClient(SOCKET socket, int xyid, char* buf);
 	void MessageDispatch(SOCKET socket ,char * msg);
 	XYStruct ParseMsg(char * msg);
 

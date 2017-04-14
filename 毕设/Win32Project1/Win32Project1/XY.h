@@ -9,7 +9,7 @@ struct XYStruct
 	};
 	unsigned int xyid;
 	unsigned int msgLen;
-	char msg[1024];
+	char msg[4096];
 	XYStruct()
 	{
 		xyid = 0;

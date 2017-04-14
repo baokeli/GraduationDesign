@@ -101,6 +101,19 @@ SOCKET SocketServer::GetSocket(int index)
 		return m_SocketArr[index];
 }
 
+SOCKET SocketServer::GetOtherSocket(SOCKET socket)
+{
+	if (socket == m_SocketArr[0] && m_SocketArr[1] != 0)
+	{
+		return m_SocketArr[1];
+	}
+	else if (socket == m_SocketArr[1] && m_SocketArr[0] != 0)
+	{
+		return m_SocketArr[0];
+	}
+	return 0;
+}
+
 void SocketServer::SaveSocket(SOCKET socket)
 {
 	for (int i = 0; i < 2; i++)
@@ -126,12 +139,21 @@ bool SocketServer::ClearSocket(SOCKET socket)
 	return false;
 }
 
-int SocketServer::SendtoClient(SOCKET socket, char* buf)
+int SocketServer::SendtoClient(SOCKET socket, int xyid, char* buff)
 {
-	SendInfo sendInfo;
-	sendInfo.cSocket = socket;
-	sendInfo.sendMsg = buf;
-	m_qSendQueue.push(sendInfo);
+// 	SendInfo sendInfo;
+// 	sendInfo.cSocket = socket;
+// 	sendInfo.sendMsg = buf;
+// 	m_qSendQueue.push(sendInfo);
+	char str[4096 + 3];
+	int len = 4096;
+	//len = strlen(buff);
+	str[0] = xyid;
+	str[1] = 1 /*len/10*/;
+	str[2] = 1 /*len%10*/;
+	//str += buff;
+	memcpy(str + 3, buff, len);
+	::send(socket, str, len + 3, 0);
 	return 0;
 }
 
@@ -148,7 +170,10 @@ void SocketServer::MessageDispatch(SOCKET socket ,char * msg)
 	}
 	case XYStruct::XYID_SEND_VOICE:
 	{
-		SendtoClient(socket, msg);
+		printf("voice %s\n", xy.msg);
+//		if (GetOtherSocket(socket) != 0)
+//			SendtoClient(GetOtherSocket(socket), 2, msg);
+		SendtoClient(socket, 2, msg);
 		break;
 	}
 	default:
@@ -166,7 +191,7 @@ XYStruct SocketServer::ParseMsg(char * msg)
 	{
 		xy.xyid = msg[0];
 		xy.msgLen = msg[1] * 10 + msg[2];
-		memcpy(xy.msg, msg + 3, xy.msgLen);
+		memcpy(xy.msg, msg + 3, 4096);
 	}
 	return xy;
 }

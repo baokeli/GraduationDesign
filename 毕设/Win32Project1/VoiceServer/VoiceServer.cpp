@@ -63,13 +63,13 @@ DWORD WINAPI RecvThread2(LPVOID lpParam)
 void RecvBuff(SOCKET resultSocket)
 {
 	int rval;
-	char buf[1024];
+	char buf[4096+3];
 	while (1)
 	{
 		if (resultSocket != 0)
 		{
 			memset(buf, 0, sizeof(buf));
-			rval = recv(resultSocket, buf, 1024, 0);
+			rval = recv(resultSocket, buf, 4096+3, 0);
 
 			if (rval == SOCKET_ERROR)
 			{
@@ -103,7 +103,7 @@ DWORD WINAPI SendThread(LPVOID lpParam)
 		if (lpSocketSvr->m_qSendQueue.size()>0)
 		{	
 			auto msg = lpSocketSvr->m_qSendQueue.front();
-			len = strlen(msg.sendMsg)+1;
+			len = 4096;
 			::send(msg.cSocket, msg.sendMsg, len, 0);
 			lpSocketSvr->m_qSendQueue.pop();
 		}

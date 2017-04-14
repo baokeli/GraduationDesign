@@ -40,17 +40,17 @@ bool GWaveOut::PrepareWaveOut(HWND hwnd, BYTE* pbuf1, BYTE* pbuf2)
 	waveformatex.wFormatTag = WAVE_FORMAT_PCM;
 	waveformatex.nChannels = 2;
 	waveformatex.cbSize = 0;
-	waveformatex.nAvgBytesPerSec = 11025*1*8/8;
-	waveformatex.nBlockAlign = 1;
+	waveformatex.nAvgBytesPerSec = 8000*4;
+	waveformatex.nBlockAlign = 4;
 	waveformatex.nSamplesPerSec = 8000;
-	waveformatex.wBitsPerSample = 8;
+	waveformatex.wBitsPerSample = 16;
 
 	MMRESULT mmresult = 0;
 	mmresult = waveOutOpen(&m_hWaveOut,m_iWaveOutID,&waveformatex,(DWORD)hwnd,0,CALLBACK_WINDOW);
 	if(mmresult != MMSYSERR_NOERROR) return false;
 
 	m_head1.lpData = (LPSTR)pbuf1;
-	m_head1.dwBufferLength = 2048;
+	m_head1.dwBufferLength = 4096;
 	m_head1.dwBytesRecorded = 0;
 	m_head1.dwUser = 0;
 	m_head1.dwFlags = 0;
@@ -62,7 +62,7 @@ bool GWaveOut::PrepareWaveOut(HWND hwnd, BYTE* pbuf1, BYTE* pbuf2)
 	if(mmresult != MMSYSERR_NOERROR) return false;
 
 	m_head2.lpData = (LPSTR)pbuf2;
-	m_head2.dwBufferLength = 2048;
+	m_head2.dwBufferLength = 4096;
 	m_head2.dwBytesRecorded = 0;
 	m_head2.dwUser = 0;
 	m_head2.dwFlags = 0;
@@ -90,10 +90,10 @@ bool GWaveOut::CloseWaveOut()
 	waveOutReset(m_hWaveOut);//停止声音处理并产生MM_WOM_DONE消息，关键
 	waveOutClose(m_hWaveOut);
 
-	if(m_head1.lpData != NULL) free(m_head1.lpData);
+	if(m_head1.lpData != NULL) delete[] (m_head1.lpData);
 	waveOutUnprepareHeader(m_hWaveOut,&m_head1,sizeof(WAVEHDR));
 
-	if(m_head2.lpData != NULL) free(m_head2.lpData);
+	if(m_head2.lpData != NULL) delete[] (m_head2.lpData);
 	waveOutUnprepareHeader(m_hWaveOut,&m_head2,sizeof(WAVEHDR));
 
 	return true;

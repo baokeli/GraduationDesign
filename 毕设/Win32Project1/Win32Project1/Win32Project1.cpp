@@ -23,7 +23,7 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 BOOL				Demo(HWND, UINT, WPARAM, LPARAM);
-LRESULT				OnMM_WIM_DATA(UINT wParam, LONG lParam);
+LRESULT				OnMM_WIM_DATA(LPSTR lParam);
 DWORD WINAPI		AcceptThreadFunc(LPVOID lpParam);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
@@ -71,9 +71,12 @@ DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 	lpClient = new SocketClient();
 	if (lpClient && lpClient->Init())
 	{
-		char buf[1024];
-		while (isConnect)
+		char buf[4096+3];
+		while (1)
 		{
+			if (!isConnect)
+				continue;
+			
 			Sleep(10);
 			memset(buf, 0, sizeof(buf));
 			auto rval = ::recv(lpClient->GetSocketID(), buf, sizeof(buf), 0);
@@ -91,8 +94,9 @@ DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 			else
 			{	//显示接收到的数据
 				printf("recv :%s\n", buf);
-				lpClient->SendtoServer(lpClient->GetSocketID(), XYStruct::XYID_SEND_VOICE, buf);
-
+				//lpClient->MessageDispatch(buf);
+				XYStruct xy = lpClient->ParseMsg(buf);
+				OnMM_WIM_DATA(xy.msg);
 			}
 			//MessageBoxA(0, buf, "提示",0);
 		}
@@ -201,12 +205,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case BTN_CONNECT:
 		{
 
-			if (!isConnect && lpClient->Connect("127.0.0.1", 4001))
+			if (!isConnect && lpClient->Connect("192.168.140.58", 4001))
 			{
 				isConnect = true;
 				char* str = "wo ri ni ma";
 				lpClient->SendtoServer(lpClient->GetSocketID(), 1, str);
 				InvalidateRect(hWnd,NULL,TRUE);
+				Demo(hWnd,message,wParam,lParam);
 			}
 			break;
 		}
@@ -253,8 +258,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case MM_WIM_DATA:
 	{
-		if (flag == true )
-			OnMM_WIM_DATA(wParam,lParam);
+			OnMM_WIM_DATA(((LPWAVEHDR)lParam)->lpData);
+	//	lpClient->SendtoServer(lpClient->GetSocketID(), XYStruct::XYID_SEND_VOICE, ((LPWAVEHDR)lParam)->lpData);
+		m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
 		break;
 	}
 	default:
@@ -301,27 +307,27 @@ BOOL Demo(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		delete m_pWaveIn; m_pWaveIn = NULL;
 		return FALSE;
 	}
-	m_pBuf1 = (BYTE*)malloc(20480);
-	m_pBuf2 = (BYTE*)malloc(20480);
+	m_pBuf1 = new BYTE[4096];
+	m_pBuf2 = new BYTE[4096];
 	if (!m_pWaveIn->PrepareWaveIn(hWnd, m_pBuf1, m_pBuf2) ||
 		!m_pWaveIn->AddBuffer(&m_pWaveIn->m_head1) ||
 		!m_pWaveIn->AddBuffer(&m_pWaveIn->m_head2))
 	{
-		free(m_pBuf1); m_pBuf1 = NULL;
-		free(m_pBuf2); m_pBuf2 = NULL;
+		delete[] m_pBuf1; m_pBuf1 = NULL;
+		delete[] m_pBuf2; m_pBuf2 = NULL;
 		delete m_pWaveIn; m_pWaveIn = NULL;
 		return FALSE;
 	}
 
 	m_pWaveOut = new GWaveOut;
-	m_pBuf3 = (BYTE*)malloc(20480);
-	m_pBuf4 = (BYTE*)malloc(20480);
+	m_pBuf3 = new BYTE[4096];
+	m_pBuf4 = new BYTE[4096];
 	if (!m_pWaveOut->IfWaveOut() || !m_pWaveOut->PrepareWaveOut(hWnd, m_pBuf3, m_pBuf4))
 	{
-		free(m_pBuf1); m_pBuf1 = NULL;
-		free(m_pBuf2); m_pBuf2 = NULL;
-		free(m_pBuf3); m_pBuf3 = NULL;
-		free(m_pBuf4); m_pBuf4 = NULL;
+		delete[] m_pBuf1; m_pBuf1 = NULL;
+		delete[] m_pBuf2; m_pBuf2 = NULL;
+		delete[] m_pBuf3; m_pBuf3 = NULL;
+		delete[] m_pBuf4; m_pBuf4 = NULL;
 		delete m_pWaveIn; m_pWaveIn = NULL;
 		delete m_pWaveOut; m_pWaveOut = NULL;
 		return FALSE;
@@ -332,21 +338,21 @@ BOOL Demo(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
-LRESULT OnMM_WIM_DATA(UINT wParam, LONG lParam)
+LRESULT OnMM_WIM_DATA(LPSTR lParam)
 {
 	if (iBufNum == 0 || iBufNum == 1)
 	{
-		memcpy(m_pBuf3, ((LPWAVEHDR)lParam)->lpData, 20480);
+		memcpy(m_pBuf3, lParam , 4096);
 		iBufNum = 2;
 		m_pWaveOut->WaveOutWrite(&m_pWaveOut->m_head1);
-		m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
+		//m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
 	}
 	else
 	{
-		memcpy(m_pBuf4, ((LPWAVEHDR)lParam)->lpData, 20480);
+		memcpy(m_pBuf4, lParam , 4096);
 		iBufNum = 1;
 		m_pWaveOut->WaveOutWrite(&m_pWaveOut->m_head2);
-		m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
+	//	m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
 	}
 	return 0;
 }
