@@ -74,24 +74,20 @@ XYStruct SocketClient::ParseMsg(char * msg)
 	// XYID + MSGLEN + MSG
 	// 1    +   2    + MSGLEN 
 	XYStruct xy;
-// 	if (strlen(msg) >= 3)
-// 	{
-		xy.xyid = msg[0];
-		xy.msgLen = msg[1] * 10 + msg[2];
-		memcpy(xy.msg, msg + 3, 4096);
-//	}
+	xy.xyid = msg[0];
+	xy.msgLen = msg[1] * 10 + msg[2];
+	memcpy(xy.msg, msg + 3, 4096 );
+
 	return xy;
 }
 
 void SocketClient::SendtoServer(SOCKET socket, int xyid, char* buff)
 {
 	char str[4096 +3];
-	int len = 4096;
-	//len = strlen(buff);
+	int len = sizeof(str)-3;
 	str[0] = xyid;
-	str[1] =1 /*len/10*/;
-	str[2] =1 /*len%10*/;
-	//str += buff;
+	str[1] =1 ;
+	str[2] =1 ;
 	memcpy(str+3,buff,len);
 	::send(socket, str, len+3, 0);
 }

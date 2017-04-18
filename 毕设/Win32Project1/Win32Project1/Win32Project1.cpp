@@ -8,7 +8,7 @@
 #define MAX_LOADSTRING 100
 #define BTN_CONNECT		101
 #define BTN_CLOSE		102
-
+char strBuff[4096];
 
 // 全局变量: 
 HINSTANCE hInst;								// 当前实例
@@ -204,14 +204,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case BTN_CONNECT:
 		{
-
+			Demo(hWnd,message,wParam,lParam);
 			if (!isConnect && lpClient->Connect("192.168.140.58", 4001))
 			{
 				isConnect = true;
-				char* str = "wo ri ni ma";
+				char* str = "socket connect!\n";
 				lpClient->SendtoServer(lpClient->GetSocketID(), 1, str);
 				InvalidateRect(hWnd,NULL,TRUE);
-				Demo(hWnd,message,wParam,lParam);
+				
 			}
 			break;
 		}
@@ -258,8 +258,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case MM_WIM_DATA:
 	{
-			OnMM_WIM_DATA(((LPWAVEHDR)lParam)->lpData);
-	//	lpClient->SendtoServer(lpClient->GetSocketID(), XYStruct::XYID_SEND_VOICE, ((LPWAVEHDR)lParam)->lpData);
+//		OnMM_WIM_DATA(((LPWAVEHDR)lParam)->lpData);
+	
+		memset(strBuff, 0, sizeof(strBuff));
+		memcpy(strBuff, ((LPWAVEHDR)lParam)->lpData, sizeof(strBuff));
+		lpClient->SendtoServer(lpClient->GetSocketID(), XYStruct::XYID_SEND_VOICE, strBuff);
 		m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
 		break;
 	}
@@ -342,6 +345,10 @@ LRESULT OnMM_WIM_DATA(LPSTR lParam)
 {
 	if (iBufNum == 0 || iBufNum == 1)
 	{
+		char str[4096];
+		memset(str, 0, sizeof(str));
+		memcpy(str, lParam, 4096);
+		strBuff;
 		memcpy(m_pBuf3, lParam , 4096);
 		iBufNum = 2;
 		m_pWaveOut->WaveOutWrite(&m_pWaveOut->m_head1);

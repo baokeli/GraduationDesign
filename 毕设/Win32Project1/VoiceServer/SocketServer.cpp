@@ -141,19 +141,7 @@ bool SocketServer::ClearSocket(SOCKET socket)
 
 int SocketServer::SendtoClient(SOCKET socket, int xyid, char* buff)
 {
-// 	SendInfo sendInfo;
-// 	sendInfo.cSocket = socket;
-// 	sendInfo.sendMsg = buf;
-// 	m_qSendQueue.push(sendInfo);
-	char str[4096 + 3];
-	int len = 4096;
-	//len = strlen(buff);
-	str[0] = xyid;
-	str[1] = 1 /*len/10*/;
-	str[2] = 1 /*len%10*/;
-	//str += buff;
-	memcpy(str + 3, buff, len);
-	::send(socket, str, len + 3, 0);
+	::send(socket, buff, 4096+3, 0);
 	return 0;
 }
 
@@ -171,9 +159,9 @@ void SocketServer::MessageDispatch(SOCKET socket ,char * msg)
 	case XYStruct::XYID_SEND_VOICE:
 	{
 		printf("voice %s\n", xy.msg);
-//		if (GetOtherSocket(socket) != 0)
-//			SendtoClient(GetOtherSocket(socket), 2, msg);
-		SendtoClient(socket, 2, msg);
+		if (GetOtherSocket(socket) != 0)
+			SendtoClient(GetOtherSocket(socket), 2, msg);
+//		SendtoClient(socket, 2, msg);
 		break;
 	}
 	default:
@@ -187,11 +175,10 @@ XYStruct SocketServer::ParseMsg(char * msg)
 	// XYID + MSGLEN + MSG
 	// 1    +   2    + MSGLEN 
 	XYStruct xy;
-	if (strlen(msg) >= 3)
-	{
-		xy.xyid = msg[0];
-		xy.msgLen = msg[1] * 10 + msg[2];
-		memcpy(xy.msg, msg + 3, 4096);
-	}
+
+	xy.xyid = msg[0];
+	xy.msgLen = msg[1] * 10 + msg[2];
+	memcpy(xy.msg, msg + 3, 4096 );
+
 	return xy;
 }

@@ -63,13 +63,13 @@ DWORD WINAPI RecvThread2(LPVOID lpParam)
 void RecvBuff(SOCKET resultSocket)
 {
 	int rval;
-	char buf[4096+3];
+	char buf[4096 + 3 ];
 	while (1)
 	{
 		if (resultSocket != 0)
 		{
 			memset(buf, 0, sizeof(buf));
-			rval = recv(resultSocket, buf, 4096+3, 0);
+			rval = recv(resultSocket, buf, 4096 + 3, 0);
 
 			if (rval == SOCKET_ERROR)
 			{
