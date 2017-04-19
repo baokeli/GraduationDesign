@@ -14,4 +14,5 @@ int iBufNum = 0;
 bool flag = false;
 HANDLE hBtnStart;
 HANDLE hBtnClose;
+HWND hEdit;
 HANDLE hText1;

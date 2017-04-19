@@ -8,6 +8,7 @@
 #define MAX_LOADSTRING 100
 #define BTN_CONNECT		101
 #define BTN_CLOSE		102
+#define EDIT			103
 char strBuff[4096];
 
 // 全局变量: 
@@ -184,7 +185,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			80, 150, 90, 40, hWnd, (HMENU)BTN_CONNECT, hInst, NULL);
 		hBtnClose = CreateWindow(L"Button", L"关闭连接", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
 			245, 150, 90, 40, hWnd, (HMENU)BTN_CLOSE, hInst, NULL);
-
+		hEdit	  = CreateWindow(_T("edit"), _T("192.168.140.58"), WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE 
+			| ES_WANTRETURN | ES_AUTOVSCROLL, 160, 80, 120, 22, hWnd, (HMENU)EDIT, hInst, NULL);
 
 		break;
 	}
@@ -204,14 +206,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case BTN_CONNECT:
 		{
-			Demo(hWnd,message,wParam,lParam);
-			if (!isConnect && lpClient->Connect("192.168.140.58", 4001))
+			if (!Demo(hWnd,message,wParam,lParam))
+			{
+				MessageBoxA(0,"音频输入设备异常！","错误",0);
+				break;
+			}
+			char ipAdrr[128];
+			GetWindowTextA(hEdit, ipAdrr,128);
+			if (!isConnect && lpClient->Connect(ipAdrr, 4001))
 			{
 				isConnect = true;
 				char* str = "socket connect!\n";
 				lpClient->SendtoServer(lpClient->GetSocketID(), 1, str);
 				InvalidateRect(hWnd,NULL,TRUE);
-				
 			}
 			break;
 		}
@@ -246,7 +253,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			DrawText(ps.hdc, L"未连接服务器。。。", -1, &rect, DT_CENTER);
 		}
-
+		rect.top += 60;
+		rect.bottom = rect.top + tm.tmHeight;
+		rect.left += 100;
+		SetTextColor(ps.hdc, 0);
+		DrawText(ps.hdc, L"输入IP：", -1, &rect, DT_LEFT);
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
@@ -258,7 +269,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case MM_WIM_DATA:
 	{
-//		OnMM_WIM_DATA(((LPWAVEHDR)lParam)->lpData);
+	//	OnMM_WIM_DATA(((LPWAVEHDR)lParam)->lpData);
 	
 		memset(strBuff, 0, sizeof(strBuff));
 		memcpy(strBuff, ((LPWAVEHDR)lParam)->lpData, sizeof(strBuff));
@@ -345,21 +356,15 @@ LRESULT OnMM_WIM_DATA(LPSTR lParam)
 {
 	if (iBufNum == 0 || iBufNum == 1)
 	{
-		char str[4096];
-		memset(str, 0, sizeof(str));
-		memcpy(str, lParam, 4096);
-		strBuff;
 		memcpy(m_pBuf3, lParam , 4096);
 		iBufNum = 2;
 		m_pWaveOut->WaveOutWrite(&m_pWaveOut->m_head1);
-		//m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
 	}
 	else
 	{
 		memcpy(m_pBuf4, lParam , 4096);
 		iBufNum = 1;
 		m_pWaveOut->WaveOutWrite(&m_pWaveOut->m_head2);
-	//	m_pWaveIn->AddBuffer((LPWAVEHDR)lParam);
 	}
 	return 0;
 }
