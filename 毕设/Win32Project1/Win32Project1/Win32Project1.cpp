@@ -94,6 +94,10 @@ DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 			}
 			else
 			{	//显示接收到的数据
+				for (size_t i = 0; i < 4096 + 3; i++)
+				{
+					buf[i] ^= key[i % sizeof(key)];
+				}
 				printf("recv :%s\n", buf);
 				//lpClient->MessageDispatch(buf);
 				XYStruct xy = lpClient->ParseMsg(buf);

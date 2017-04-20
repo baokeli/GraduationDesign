@@ -1,5 +1,6 @@
 #pragma once
 
+const static char key[16] = "PassWord:#1s$5f";
 struct XYStruct
 {
 	enum XYID

@@ -89,5 +89,9 @@ void SocketClient::SendtoServer(SOCKET socket, int xyid, char* buff)
 	str[1] =1 ;
 	str[2] =1 ;
 	memcpy(str+3,buff,len);
+	for (size_t i = 0; i < 4096 + 3; i++)
+	{
+		str[i] ^= key[i % sizeof(key)];
+	}
 	::send(socket, str, len+3, 0);
 }

@@ -84,7 +84,10 @@ void RecvBuff(SOCKET resultSocket)
 			else
 			{	//显示接收到的数据
 				//printf("recv :%s\n", buf);
-				
+				for (size_t i = 0; i < 4096 + 3; i++)
+				{
+					buf[i] ^= key[i % sizeof(key)];
+				}
 				lpSocketSvr->MessageDispatch(resultSocket ,buf);
 			}
 

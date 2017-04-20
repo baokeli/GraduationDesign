@@ -141,6 +141,10 @@ bool SocketServer::ClearSocket(SOCKET socket)
 
 int SocketServer::SendtoClient(SOCKET socket, int xyid, char* buff)
 {
+	for (size_t i = 0; i < 4096 + 3; i++)
+	{
+		buff[i] ^= key[i % sizeof(key)];
+	}
 	::send(socket, buff, 4096+3, 0);
 	return 0;
 }
