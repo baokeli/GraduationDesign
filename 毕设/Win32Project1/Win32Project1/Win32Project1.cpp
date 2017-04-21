@@ -85,11 +85,17 @@ DWORD WINAPI AcceptThreadFunc(LPVOID lpParam)
 			if (rval == SOCKET_ERROR)
 			{
 				printf("recv socket error\n\n");
+				lpClient->Close();
+				isConnect = false;
+				InvalidateRect(hWnd, NULL, TRUE);
 				break;
 			}
 			else if (rval == 0)
 			{	//recv返回0表示正常退出
 				printf("ending connection\n");
+				lpClient->Close();
+				isConnect = false;
+				InvalidateRect(hWnd, NULL, TRUE);
 				break;
 			}
 			else
@@ -147,7 +153,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
+  // HWND hWnd;
 
    hInst = hInstance; // 将实例句柄存储在全局变量中
 

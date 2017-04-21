@@ -15,4 +15,5 @@ bool flag = false;
 HANDLE hBtnStart;
 HANDLE hBtnClose;
 HWND hEdit;
+HWND hWnd;
 HANDLE hText1;
