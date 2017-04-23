@@ -162,7 +162,7 @@ void SocketServer::MessageDispatch(SOCKET socket ,char * msg)
 	}
 	case XYStruct::XYID_SEND_VOICE:
 	{
-		printf("voice %s\n", xy.msg);
+//		printf("voice %s\n", xy.msg);
 		if (GetOtherSocket(socket) != 0)
 			SendtoClient(GetOtherSocket(socket), 2, msg);
 //		SendtoClient(socket, 2, msg);

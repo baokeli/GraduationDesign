@@ -195,7 +195,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			80, 150, 90, 40, hWnd, (HMENU)BTN_CONNECT, hInst, NULL);
 		hBtnClose = CreateWindow(L"Button", L"πÿ±’¡¨Ω”", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
 			245, 150, 90, 40, hWnd, (HMENU)BTN_CLOSE, hInst, NULL);
-		hEdit	  = CreateWindow(_T("edit"), _T("192.168.140.58"), WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE 
+		hEdit	  = CreateWindow(_T("edit"), _T("192.168.191.1"), WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE 
 			| ES_WANTRETURN | ES_AUTOVSCROLL, 160, 80, 120, 22, hWnd, (HMENU)EDIT, hInst, NULL);
 
 		break;
